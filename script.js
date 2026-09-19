@@ -24,8 +24,6 @@ function carregarProdutos() {
 }
 
 let estoque = [];
-let comparar = [];   /* ids marcados no comparador (máx. 3) */
-const MAX_COMPARAR = 3;
 
 /* ---------------- Rótulos e cores ---------------------------------------- */
 const STATUS = {
@@ -172,9 +170,7 @@ function card(p) {
     '<article class="card' + (vendido ? ' card-out' : '') + '">' +
       '<div class="card-media">' +
         '<span class="badge ' + st.classe + '">' + st.rotulo + '</span>' +
-        (vendido ? '' :
-          '<label class="card-cmp"><input type="checkbox" data-cmp="' + esc(p.id) + '"' +
-          (comparar.indexOf(String(p.id)) !== -1 ? ' checked' : '') + '>Comparar</label>') +
+        (p.maisVendido && !vendido ? '<span class="badge badge-fire">🔥 Mais vendido</span>' : '') +
         media +
       '</div>' +
       '<div class="card-body">' +
@@ -237,7 +233,9 @@ function ordenar(lista) {
   const pos = {};
   estoque.forEach(function (p, i) { pos[p.id] = i; });
   return lista.slice().sort(function (a, b) {
-    return (peso[a.status] - peso[b.status]) || (pos[a.id] - pos[b.id]);
+    return (peso[a.status] - peso[b.status]) ||
+           ((b.maisVendido ? 1 : 0) - (a.maisVendido ? 1 : 0)) ||
+           (pos[a.id] - pos[b.id]);
   });
 }
 
@@ -255,57 +253,6 @@ function renderizar() {
       ? 'Nenhum aparelho encontrado'
       : itens.length + (itens.length === 1 ? ' aparelho' : ' aparelhos') +
         (disp !== itens.length ? ', ' + disp + (disp === 1 ? ' disponível' : ' disponíveis') : '');
-}
-
-/* ---------------- Comparador de modelos --------------------------------- */
-function atualizarBarraComparar() {
-  const n = comparar.length;
-  document.getElementById('cmpBar').hidden = n === 0;
-  document.getElementById('cmpTxt').textContent =
-    n + (n === 1 ? ' selecionado' : ' selecionados');
-  const abrir = document.getElementById('cmpOpen');
-  abrir.disabled = n < 2;
-  abrir.title = n < 2 ? 'Selecione pelo menos 2 aparelhos' : '';
-}
-
-function abrirComparador() {
-  const itens = comparar.map(function (id) {
-    return estoque.filter(function (p) { return String(p.id) === id; })[0];
-  }).filter(Boolean);
-  if (itens.length < 2) { aviso('Selecione pelo menos 2 aparelhos para comparar.'); return; }
-
-  const ficha = function (p) { return (typeof MODELOS !== 'undefined' && MODELOS[p.modelo]) || {}; };
-  const linhas = [
-    ['Capacidade', function (p) { return p.armazenamento + ' GB'; }],
-    ['Condição',   function (p) { return p.condicao || '—'; }],
-    ['Cor',        function (p) { return p.cor || 'Cores variadas'; }],
-    ['Chip',       function (p) { return ficha(p).chip || '—'; }],
-    ['Tela',       function (p) { return ficha(p).tela || '—'; }],
-    ['Câmeras',    function (p) { return ficha(p).camera || '—'; }],
-    ['Conector',   function (p) { return ficha(p).conector || '—'; }],
-    ['Situação',   function (p) { return (STATUS[p.status] || STATUS.disponivel).rotulo; }]
-  ];
-
-  const cel = function (tag, fn) {
-    return itens.map(function (p) { return '<' + tag + '>' + fn(p) + '</' + tag + '>'; }).join('');
-  };
-
-  document.getElementById('cmpBody').innerHTML =
-    '<table>' +
-      '<thead><tr><th scope="col"></th>' + cel('th', function (p) { return esc(p.modelo); }) + '</tr></thead>' +
-      '<tbody>' +
-        linhas.map(function (l) {
-          return '<tr><th scope="row">' + l[0] + '</th>' + cel('td', function (p) { return esc(l[1](p)); }) + '</tr>';
-        }).join('') +
-      '</tbody>' +
-      '<tfoot><tr><td></td>' + cel('td', function (p) {
-        return '<button class="btn btn-wa btn-sm" type="button" data-produto="' + esc(p.id) + '">' +
-               '<span class="ico-wa" aria-hidden="true"></span>Tenho interesse</button>';
-      }) + '</tr></tfoot>' +
-    '</table>';
-
-  const dlg = document.getElementById('cmp');
-  if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
 }
 
 /* ---------------- Depoimentos ------------------------------------------- */
@@ -352,40 +299,6 @@ function ligarEventos() {
     const p = estoque.filter(function (x) { return String(x.id) === btn.dataset.produto; })[0];
     if (p) abrirWhatsApp(mensagemProduto(p));
   });
-
-  /* Comparador */
-  document.getElementById('grade').addEventListener('change', function (e) {
-    const box = e.target.closest('[data-cmp]');
-    if (!box) return;
-    const id = box.dataset.cmp;
-    if (box.checked) {
-      if (comparar.length >= MAX_COMPARAR) {
-        box.checked = false;
-        aviso('Você pode comparar até ' + MAX_COMPARAR + ' aparelhos por vez.');
-        return;
-      }
-      comparar.push(id);
-    } else {
-      comparar = comparar.filter(function (x) { return x !== id; });
-    }
-    atualizarBarraComparar();
-  });
-  document.getElementById('cmpOpen').addEventListener('click', abrirComparador);
-  document.getElementById('cmpClear').addEventListener('click', function () {
-    comparar = [];
-    atualizarBarraComparar();
-    renderizar();
-  });
-  const dlg = document.getElementById('cmp');
-  document.getElementById('cmpClose').addEventListener('click', function () { dlg.close(); });
-  dlg.addEventListener('click', function (e) {
-    if (e.target === dlg) { dlg.close(); return; }
-    const btn = e.target.closest('[data-produto]');
-    if (!btn) return;
-    const p = estoque.filter(function (x) { return String(x.id) === btn.dataset.produto; })[0];
-    if (p) abrirWhatsApp(mensagemProduto(p));
-  });
-
   /* Links de WhatsApp espalhados pelo site */
   document.querySelectorAll('[data-wa]').forEach(function (el) {
     if (WA_CONFIGURADO) {
@@ -455,23 +368,8 @@ function ligarEventos() {
   onScroll();
 }
 
-/* ---------------- Composição do hero ------------------------------------ */
-function montarHero() {
-  const alvo = document.getElementById('heroArt');
-  if (!alvo) return;
-  /* três acabamentos diferentes, só para a composição não repetir aparelhos */
-  const cores = [];
-  estoque.forEach(function (p) {
-    if (p.status !== 'vendido' && p.cor && cores.indexOf(p.cor) === -1) cores.push(p.cor);
-  });
-  ['Titânio deserto', 'Azul escuro', 'Preto'].forEach(function (c) {
-    if (cores.length < 3 && cores.indexOf(c) === -1) cores.push(c);
-  });
-
-  alvo.innerHTML = cores.slice(0, 3).map(function (cor, i) {
-    return '<div class="hero-dev hero-dev-' + (i + 1) + '">' + aparelhoSVG(cor, 'hero' + i) + '</div>';
-  }).join('');
-}
+/* Observação: a composição do hero agora usa fotos reais dos aparelhos
+   (ver <picture> em index.html), então não é mais gerada por JavaScript. */
 
 /* ---------------- Detalhes do rodapé/marca ------------------------------ */
 function aplicarMarca() {
@@ -510,12 +408,10 @@ function revelar() {
   estoque = carregarProdutos();
   aplicarMarca();
   montarFiltros();
-  montarHero();
   ligarEventos();
   renderizar();
   montarDepoimentos();
   mostrarVersao();
-  atualizarBarraComparar();
   revelar();
 
   /* App instalável (PWA): funciona em https ou localhost */
