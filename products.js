@@ -66,6 +66,7 @@ const MODELOS = {
   'iPhone 15':         { chip: 'A16 Bionic', tela: '6,1"', camera: '48 MP + 12 MP ultra',                    conector: 'USB-C' },
   'iPhone 14 Pro Max': { chip: 'A16 Bionic', tela: '6,7"', camera: '48 MP + 12 MP ultra + 12 MP tele (3x)', conector: 'Lightning' },
   'iPhone 14 Pro':     { chip: 'A16 Bionic', tela: '6,1"', camera: '48 MP + 12 MP ultra + 12 MP tele (3x)', conector: 'Lightning' },
+  'iPhone 14 Plus':    { chip: 'A15 Bionic', tela: '6,7"', camera: '12 MP + 12 MP ultra',                    conector: 'Lightning' },
   'iPhone 14':         { chip: 'A15 Bionic', tela: '6,1"', camera: '12 MP + 12 MP ultra',                    conector: 'Lightning' },
   'iPhone 13 Pro':     { chip: 'A15 Bionic', tela: '6,1"', camera: '12 MP + 12 MP ultra + 12 MP tele (3x)', conector: 'Lightning' },
   'iPhone 13':         { chip: 'A15 Bionic', tela: '6,1"', camera: '12 MP + 12 MP ultra',                    conector: 'Lightning' },
@@ -91,6 +92,10 @@ const MODELOS = {
      imagem        — opcional: caminho da foto, ex.: 'assets/images/iphone-17.jpg'
                      Se ficar vazio, o site desenha o aparelho na cor informada.
      status        — 'disponivel' | 'reservado' | 'vendido'
+     maisVendido   — opcional (true/false). Quando true, mostra um selo "🔥 Mais vendido"
+                     no card e o aparelho sobe para o topo do estoque disponível.
+                     Marque à mão os modelos que mais saem na loja — não é calculado
+                     automaticamente.
      preco         — opcional e desativado por padrão (ver CONFIG.mostrarPrecos)
 
    Esta estrutura é a mesma que uma API REST devolveria no futuro:
@@ -117,10 +122,11 @@ const PRODUTOS = [
   /* ---- Linha 14 ---- */
   { id: 'demo-14-promax', modelo: 'iPhone 14 Pro Max', armazenamento: 256, condicao: 'Seminovo', imagem: '', status: 'disponivel' },
   { id: 'demo-14-pro',    modelo: 'iPhone 14 Pro',     armazenamento: 128, condicao: 'Seminovo', imagem: '', status: 'reservado' },
+  { id: 'demo-14-plus',   modelo: 'iPhone 14 Plus',    armazenamento: 128, condicao: 'Seminovo', imagem: '', status: 'disponivel', maisVendido: true },
   { id: 'demo-14',        modelo: 'iPhone 14',         armazenamento: 128, condicao: 'Seminovo', imagem: '', status: 'disponivel' },
 
   /* ---- Linha 13 ---- */
-  { id: 'demo-13-pro',    modelo: 'iPhone 13 Pro',     armazenamento: 128, condicao: 'Seminovo', imagem: '', status: 'disponivel' },
+  { id: 'demo-13-pro',    modelo: 'iPhone 13 Pro',     armazenamento: 128, condicao: 'Seminovo', imagem: '', status: 'disponivel', maisVendido: true },
   { id: 'demo-13',        modelo: 'iPhone 13',         armazenamento: 128, condicao: 'Seminovo', imagem: '', status: 'disponivel' },
 
   /* ---- Linha 12 ---- */
