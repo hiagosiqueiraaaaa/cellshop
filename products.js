@@ -16,7 +16,7 @@ const CONFIG = {
 
   // WhatsApp em formato internacional, só números: 55 + DDD + número.
   // Exemplo (Arapiraca): '5582999999999'
-  whatsapp: '5582993824314',
+  whatsapp: '5582996662815',
 
   // Perfil oficial do Instagram (só o usuário, sem @ e sem link).
   // Exemplo: 'cellshop'
