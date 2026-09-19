@@ -77,7 +77,20 @@
         </a>
       </div>
     </div>
-    <div class="hero-art" id="heroArt" aria-hidden="true"></div>
+    <div class="hero-art" id="heroArt" aria-hidden="true">
+      <picture class="hero-dev hero-dev-2">
+        <source srcset="hero-iphone-preto.webp" type="image/webp">
+        <img src="hero-iphone-preto.png" alt="">
+      </picture>
+      <picture class="hero-dev hero-dev-1">
+        <source srcset="hero-iphone-vinho.webp" type="image/webp">
+        <img src="hero-iphone-vinho.png" alt="">
+      </picture>
+      <picture class="hero-dev hero-dev-3">
+        <source srcset="hero-iphone-titanio.webp" type="image/webp">
+        <img src="hero-iphone-titanio.png" alt="">
+      </picture>
+    </div>
   </div>
 
   <div class="wrap">
@@ -380,21 +393,6 @@
 <a class="float-wa" data-wa="Olá! Vi o catálogo de iPhones no site." aria-label="Falar no WhatsApp">
   <span class="ico-wa" aria-hidden="true"></span>
 </a>
-
-<!-- Comparador de modelos -->
-<div class="cmp-bar" id="cmpBar" hidden>
-  <p id="cmpTxt" aria-live="polite"></p>
-  <button type="button" class="btn btn-wa btn-sm" id="cmpOpen">Comparar</button>
-  <button type="button" class="btn-clear" id="cmpClear">Limpar</button>
-</div>
-
-<dialog class="cmp" id="cmp" aria-labelledby="cmpTitulo">
-  <div class="cmp-head">
-    <h3 id="cmpTitulo">Comparar aparelhos</h3>
-    <button type="button" class="cmp-x" id="cmpClose" aria-label="Fechar comparação">&times;</button>
-  </div>
-  <div class="cmp-scroll" id="cmpBody"></div>
-</dialog>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
