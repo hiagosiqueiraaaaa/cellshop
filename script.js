@@ -207,18 +207,15 @@ function montarFiltros() {
   };
 
   opcoes(document.getElementById('fModelo'), unico('modelo'));
-  opcoes(document.getElementById('fCapacidade'), unico('armazenamento'), function (a, b) { return a - b; });
 }
 
 function filtrar() {
   const termo = normalizar(document.getElementById('fBusca').value);
   const modelo = document.getElementById('fModelo').value;
-  const cap = document.getElementById('fCapacidade').value;
-  const status = document.getElementById('fStatus').value;
+  const status = 'disponivel';
 
   return estoque.filter(function (p) {
     if (modelo && p.modelo !== modelo) return false;
-    if (cap && String(p.armazenamento) !== cap) return false;
     if (status && p.status !== status) return false;
     if (termo) {
       const alvo = normalizar([p.modelo, p.armazenamento + 'gb', p.cor, p.condicao].join(' '));
@@ -288,7 +285,6 @@ function ligarEventos() {
 
   document.getElementById('limpar').addEventListener('click', function () {
     form.reset();
-    document.getElementById('fStatus').value = 'disponivel';
     renderizar();
   });
 
